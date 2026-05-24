@@ -1,0 +1,16 @@
+venv/
+.venv/
+env/
+
+# ملفات الكاش الخاصة بـ البايثون
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+
+.env
+
+
+.vscode/
+.DS_Store
