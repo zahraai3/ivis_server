@@ -72,41 +72,42 @@ def setup_from_api():
     global previous_reading, occlusion_timeout, last_change_time
 
     print("Waiting for setup from app...")
-    ms.setup_event.wait()  # انتظر إشارة من Flask
+    while True : 
+        ms.setup_event.wait()  # انتظر إشارة من Flask
 
-    with lock:
-        setup = ms.pending_setup
+        with lock:
+            setup = ms.pending_setup
 
-    volume_entered  = setup["capacity_ml"]
-    duration_min    = setup["duration_min"]
-    drop_factor     = setup["drop_factor"]
-    density         = setup["density"]
-    fluid_name      = setup["fluid_name"]
+        volume_entered  = setup["capacity_ml"]
+        duration_min    = setup["duration_min"]
+        drop_factor     = setup["drop_factor"]
+        density         = setup["density"]
+        fluid_name      = setup["fluid_name"]
 
-    print("Reading initial weight...")
-    first_reading = read_grams()
-    expected_mass = volume_entered * density
-    offset        = first_reading - expected_mass
+        print("Reading initial weight...")
+        first_reading = read_grams()
+        expected_mass = volume_entered * density
+        offset        = first_reading - expected_mass
 
-    with data_lock:
-        previous_volume  = volume_entered
-        previous_time    = time.time()
-        previous_reading = first_reading
-        last_change_time = time.time()
+        with data_lock:
+            previous_volume  = volume_entered
+            previous_time    = time.time()
+            previous_reading = first_reading
+            last_change_time = time.time()
 
-    required          = (volume_entered / duration_min) * drop_factor
-    occlusion_timeout = (60.0 / required) * safety_factor
+        required          = (volume_entered / duration_min) * drop_factor
+        occlusion_timeout = (60.0 / required) * safety_factor
 
-    with lock:
-        state["setup_done"]         = True
-        state["running"]            = True
-        state["fluid_name"]         = fluid_name
-        state["capacity_ml"]        = volume_entered
-        state["required_flow_rate"] = round(required, 2)
-        state["percent"]            = 100.0
+        with lock:
+            state["setup_done"]         = True
+            state["running"]            = True
+            state["fluid_name"]         = fluid_name
+            state["capacity_ml"]        = volume_entered
+            state["required_flow_rate"] = round(required, 2)
+            state["percent"]            = 100.0
 
-    print(f"Setup complete — {fluid_name} | {round(required, 2)} drop/min")
-    setup_done.set()
+        print(f"Setup complete — {fluid_name} | {round(required, 2)} drop/min")
+        setup_done.set()
 
 # ===== Load Cell Loop =====
 def read_load_cell():
