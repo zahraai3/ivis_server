@@ -69,6 +69,9 @@ def get_status():
             "percent":         state["percent"],              # remaining fluid %
             "running":         state["running"],              # pump running state
             "flow_rate_ml_hr": state["current_flow_rate"],    # current flow rate
+            "required_flow_rate": state["required_flow_rate"],  
+            "deviation":          state["deviation"],            
+            "remaining_time":     state["remaining_time"],
             "obstructed":      state["occlusion"],            # blockage detection
             "alarm10_active":  state["alarm10_active"],       # 10% alarm state
             "alarm10_ack":     state["alarm10_ack"],          # alarm acknowledged
